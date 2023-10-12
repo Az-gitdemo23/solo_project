@@ -3,11 +3,12 @@ from flask import Flask
 
 def create_app(test_config=None):
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__, instance_relative_config=True)                                           /* Vulnerable hardcoded password and so, changed */ 
     app.config.from_mapping(
-        SECRET_KEY='super_secret_key',
+        SECRET_KEY=os.environ.get('SECRET_KEY'),  # Load SECRET_KEY from an environment variable
         DATABASE=os.path.join(app.instance_path, 'login_form.sqlite'),
     )
+
 
     if test_config is None:
         # load the instance config, if it exists, when not testing

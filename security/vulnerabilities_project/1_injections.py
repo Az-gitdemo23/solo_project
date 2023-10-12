@@ -18,9 +18,10 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return '''<form method="POST" action="/submit">
-        <input type="text" name="message" />
+        <input type="text" name="message" value='<script>alert("I am an attacker!")</script>' />
         <input type="submit" />
     </form>'''
+
 
 @app.route('/submit', methods=['POST'])
 def submit():

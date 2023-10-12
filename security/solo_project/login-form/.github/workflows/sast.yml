@@ -1,4 +1,4 @@
-name: SAST
+name: Bandit Security Scan
 
 on:
   pull_request:
