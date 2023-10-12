@@ -26,8 +26,12 @@ def register():
             error = 'Username is required.'
 
         if error is None:
-            User.create(username, password)
-            return redirect(url_for('auth.login'))
+            try:
+                User.create(username, generate_password_hash (password) )                          /* use generate_password_hash before saving them */
+                return redirect(url_for('auth.login'))
+            except YourDatabaseError:
+                error = 'Registration failed due to a database error'
+        
 
         flash(error)
 
