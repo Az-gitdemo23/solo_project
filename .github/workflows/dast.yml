@@ -25,6 +25,6 @@ jobs:
         uses: zaproxy/action-baseline@v0.6.1
         with:
           target: "http://localhost:5000"
-          fail_action: true       /* vulnerability: it should be true, to fail if app is insecure */
+          fail_action: true       #vulnerability: it should be true, to fail if app is insecure
           token: ${{ secrets.GITHUB_TOKEN }}   #vulnerability: GitHub token should have all necessary permissions to the repo 
           issue_title: DAST Security Tests
