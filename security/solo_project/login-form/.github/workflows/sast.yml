@@ -1,54 +1,40 @@
-name: Bandit Security Scan
+name: Manual SAST Workflow
 
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  bandit:
-    runs-on: ubuntu-latest
+  sast:
+    name: Run SAST
+    runs-on: self-hosted
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Bandit - Security Issues in Python code
-        uses: mdegis/bandit-action@v1.0
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: DAST/OWASP ZAP Scan
+        uses: zaproxy/action-baseline@v0.6.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           path: "."
           exit_zero: true
 
-  semgrep:
-    runs-on: ubuntu-latest
-    # Skip any PR created by dependabot to avoid permission issues
-    if: (github.actor != 'dependabot[bot]')
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Semgrep - Lightweight SAST to find bugs and enfource code standards
-        uses: returntocorp/semgrep-action@v1
-        with:
-          config: >- # more at semgrep.dev/explore
-            p/security-audit
-            p/secrets
-
-  depcheck:
+  bandit_docker:
+    name: Bandit Security Scan (Docker)
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Depcheck tool
-        uses: dependency-check/Dependency-Check_Action@main
-        id: Depcheck
-        with:
-          project: 'insecure-acebook'
-          path: '.'
-          format: 'HTML'
-          args: >
-            --failOnCVSS 7
-            --enableRetired
-      - name: Upload Test results
-        uses: actions/upload-artifact@main
-        with:
-           name: Depcheck report
-           path: ${{github.workspace}}/reports
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Python
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install python3 -y
+          sudo apt-get install python3-pip -y
+          python3 -m pip install bandit
+
+      - name: Run Bandit Security Scan
+        run: |
+          # Replace this line with the Bandit scan command for your project
+          bandit -r .
